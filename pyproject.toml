@@ -3,12 +3,12 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fisheye_image"
+name = "sphere-image-processor"
 version = "0.0.1"
 authors = [
   { name = "Ryuto Yoshida" },
 ]
-description = "Fisheye image remapping (equidistant model) with OpenCV, integrated with rotation and geometry helpers."
+description = "Spherical image processing with OpenCV, integrated with rotation and geometry helpers."
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [
@@ -35,11 +35,11 @@ dev = [
 default-groups = ["dev"]
 
 [project.urls]
-Homepage = "https://github.com/ry-yoshida-dev/FisheyeImage"
-"Bug Tracker" = "https://github.com/ry-yoshida-dev/FisheyeImage/issues"
+Homepage = "https://github.com/ry-yoshida-dev/SphereImageProcessor"
+"Bug Tracker" = "https://github.com/ry-yoshida-dev/SphereImageProcessor/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-sphere_image = ["py.typed"]
+sphere_image_processor = ["py.typed"]
