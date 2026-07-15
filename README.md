@@ -46,3 +46,12 @@ CLI entrypoint:
 ```bash
 python -m src.sphere_image.fisheye --help
 ```
+
+## Testing
+
+Tests live under [tests/](tests/) and mirror the `src/sphere_image` layout. Install the `dev` dependency group and run:
+
+```bash
+uv sync
+uv run pytest
+```
