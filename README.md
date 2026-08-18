@@ -47,6 +47,21 @@ CLI entrypoint:
 python -m src.sphere_image.fisheye --help
 ```
 
+## Interactive viewer
+
+An interactive Streamlit viewer lives under [tools/viewer/](tools/viewer/).
+It lets you pick a fisheye or equirectangular sample image (or upload your
+own) and switch projection method. The image is converted into an
+equirectangular texture and rendered in an embedded WebGL panorama viewer:
+dragging to look around and scrolling to zoom run entirely client-side, with
+no reload. It is a standalone application built on top of this package, not
+part of the installed `sphere_image` library.
+
+```bash
+uv sync
+uv run streamlit run main.py
+```
+
 ## Testing
 
 Tests live under [tests/](tests/) and mirror the `src/sphere_image` layout. Install the `dev` dependency group and run:

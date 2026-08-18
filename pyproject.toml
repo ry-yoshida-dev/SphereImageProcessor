@@ -31,12 +31,15 @@ dev = [
     "ipykernel",
     "pytest",
 ]
+viewer = [
+    "streamlit>=1.61.1",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
 [tool.uv]
-default-groups = ["dev"]
+default-groups = ["dev", "viewer"]
 
 [project.urls]
 Homepage = "https://github.com/ry-yoshida-dev/SphereImageProcessor"
