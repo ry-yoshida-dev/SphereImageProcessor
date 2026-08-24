@@ -1,3 +1,7 @@
+"""
+Entry point for `streamlit run main.py`.
+"""
+
 from __future__ import annotations
 
 from tools.viewer import SphereViewerApp
@@ -5,7 +9,7 @@ from tools.viewer import SphereViewerApp
 
 def main() -> None:
     """
-    Entry point for `streamlit run main.py`.
+    Launch the Streamlit sphere image viewer.
     """
     SphereViewerApp().run()
 

@@ -81,16 +81,14 @@ _HTML_TEMPLATE = """
       THREE.MathUtils.clamp(intersectionPoint.y / intersectionPoint.length(), -1, 1)
     );
     const azimuthRadian = Math.atan2(intersectionPoint.z, intersectionPoint.x);
-    const longitudeRadian = azimuthRadian;
-    const latitudeRadian = Math.PI / 2 - polarAngleRadian;
 
-    const normalizedU = (longitudeRadian + Math.PI) / (2 * Math.PI);
-    const normalizedVDisplayed = (Math.PI / 2 - latitudeRadian) / Math.PI;
+    const normalizedU = ((azimuthRadian / (2 * Math.PI)) % 1 + 1) % 1;
+    const normalizedVDisplayed = polarAngleRadian / Math.PI;
 
     if (IMAGE_KIND !== "Fisheye (180°)") {
       return {
-        x: normalizedU * SOURCE_IMAGE_WIDTH,
-        y: normalizedVDisplayed * SOURCE_IMAGE_HEIGHT,
+        x: Math.min(normalizedU * SOURCE_IMAGE_WIDTH, SOURCE_IMAGE_WIDTH - 1),
+        y: Math.min(normalizedVDisplayed * SOURCE_IMAGE_HEIGHT, SOURCE_IMAGE_HEIGHT - 1),
       };
     }
 
