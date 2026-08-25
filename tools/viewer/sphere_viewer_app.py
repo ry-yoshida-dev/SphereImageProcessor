@@ -6,7 +6,11 @@ import numpy as np
 import streamlit as st
 
 from sphere_image.fisheye import FisheyeProjectionMethod
+from sphere_image.utils import OutputFovBasis
 
+from .captured_view import CapturedView
+from .flat_view_export_fields import FlatViewExportFields
+from .flat_view_export_settings import FlatViewExportSettings
 from .image_kind import ImageKind
 from .image_loader import ImageLoader
 from .image_source_kind import ImageSourceKind
@@ -60,13 +64,11 @@ class SphereViewerApp:
                 self._render_fisheye_controls(image_kind)
             )
             texture_width = self._render_quality_control()
-            initial_fov_degree = st.slider(
-                "Initial zoom (FoV, deg)", min_value=30.0, max_value=110.0, value=80.0, step=1.0
-            )
             aspect_ratio = self._render_aspect_ratio_control()
             max_width_px = st.slider(
                 "Viewer width (px)", min_value=320, max_value=1600, value=1600, step=20
             )
+            flat_view_export_fields = self._render_flat_view_export_controls()
             st.caption("Drag to look around, scroll to zoom — fully interactive, no reload.")
 
         if loaded_image is None:
@@ -84,9 +86,9 @@ class SphereViewerApp:
         with st.spinner("Building panorama texture..."):
             texture = self._build_equirect_texture(loaded_image, settings)
         st.caption(loaded_image.display_name)
-        PanoramaViewer.render(
+        captured_view: CapturedView | None = PanoramaViewer.render(
             texture_bgr=texture,
-            initial_fov_degree=initial_fov_degree,
+            roll_degree=flat_view_export_fields.roll_deg,
             aspect_ratio=aspect_ratio,
             max_width_px=max_width_px,
             image_kind=image_kind,
@@ -95,7 +97,30 @@ class SphereViewerApp:
             is_camera_pointing_up=is_camera_pointing_up,
             source_image_width=loaded_image.pixels.shape[1],
             source_image_height=loaded_image.pixels.shape[0],
+            key="panorama_viewer",
         )
+
+        st.subheader("Flat view export")
+        if captured_view is None:
+            st.info(
+                'Drag to look around and scroll to zoom, then click "Extract this view" '
+                + "to fill in yaw/pitch/FoV below."
+            )
+        st.caption(
+            "Copy this into SphereImageCalibration's flat_views.yaml to register the view above."
+        )
+        flat_view_export_settings = FlatViewExportSettings(
+            camera_name=flat_view_export_fields.camera_name,
+            view_name=flat_view_export_fields.view_name,
+            yaw_deg=captured_view.yaw_deg if captured_view is not None else 0.0,
+            pitch_deg=captured_view.pitch_deg if captured_view is not None else 0.0,
+            roll_deg=flat_view_export_fields.roll_deg,
+            output_width=flat_view_export_fields.output_width,
+            output_height=flat_view_export_fields.output_height,
+            output_fov_deg=captured_view.fov_deg if captured_view is not None else 80.0,
+            output_basis=flat_view_export_fields.output_basis,
+        )
+        st.code(flat_view_export_settings.to_flat_views_yaml_snippet(), language="yaml")
 
     @staticmethod
     @st.cache_data(show_spinner=False)
@@ -291,6 +316,42 @@ class SphereViewerApp:
             index=list(_ASPECT_RATIO_OPTIONS.keys()).index(_DEFAULT_ASPECT_RATIO_LABEL),
         )
         return _ASPECT_RATIO_OPTIONS[selected_label]
+
+    @staticmethod
+    def _render_flat_view_export_controls() -> FlatViewExportFields:
+        """
+        Render the sidebar fields for a flat_views.yaml export, other than yaw/pitch/FoV.
+
+        Yaw, pitch, and field of view are not entered here: they come from clicking
+        "Extract this view" in the panorama viewer's own toolbar below.
+
+        Returns
+        -------
+        FlatViewExportFields
+            The flat view fields currently entered for export.
+        """
+        st.header("Flat view export")
+        camera_name = st.text_input("Camera name", value="camera1")
+        view_name = st.text_input("View name", value="camera1_view")
+        roll_deg = st.number_input("Roll (deg)", value=0.0, step=1.0)
+        output_width = st.number_input("Output width (px)", min_value=1, value=1280, step=1)
+        output_height = st.number_input("Output height (px)", min_value=1, value=720, step=1)
+        output_basis_options = list(OutputFovBasis)
+        output_basis = st.selectbox(
+            "Output FoV basis",
+            options=output_basis_options,
+            index=output_basis_options.index(OutputFovBasis.VERTICAL),
+            format_func=lambda basis: basis.value,
+        )
+        assert output_basis is not None
+        return FlatViewExportFields(
+            camera_name=camera_name,
+            view_name=view_name,
+            roll_deg=roll_deg,
+            output_width=int(output_width),
+            output_height=int(output_height),
+            output_basis=output_basis,
+        )
 
     @staticmethod
     def _default_sample_image_directory() -> Path:
