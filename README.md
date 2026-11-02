@@ -1,8 +1,15 @@
-# FisheyeImage
+# SphereImageProcessor
 
-FisheyeImage is a Python package for remapping sphere_image images toward a rectilinear-style view. It uses an equidistant projection model, builds per-pixel sampling coordinates with NumPy, and warps with `cv2.remap`. Field of view and output resolution are configured through `FisheyeProcessorParameters`.
+## Overview
 
-For module-level detail, see [src/sphere_image/README.md](src/sphere_image/README.md).
+SphereImageProcessor (`sphere_image`) is a Python package that remaps fisheye and equirectangular images to other views. It builds per-pixel sampling coordinates with NumPy from the output field of view and a rotation, and warps with `cv2.remap`. Field of view, output resolution and projection method are configured through parameter dataclasses.
+
+| Input | Parameters | Projection methods |
+| --- | --- | --- |
+| Fisheye | `FisheyeProcessorParameters` | Equidistant, orthographic, stereographic, equisolid |
+| Equirectangular | `EquirectangularProcessorParameters` | Perspective (the other `EquirectangularProjectionMethod` values are not implemented and raise `ValueError`) |
+
+For fisheye details, see [src/sphere_image/fisheye/README.md](src/sphere_image/fisheye/README.md).
 
 ## Installation
 
@@ -41,10 +48,11 @@ processor = params.build_processor(image=image)
 out = processor.run_pipeline(rotation_matrix=RotationMatrix.unit_matrix())
 ```
 
-CLI entrypoint:
+CLI entrypoints:
 
 ```bash
 python -m src.sphere_image.fisheye --help
+python -m src.sphere_image.equirectangular --help
 ```
 
 ## Interactive viewer
