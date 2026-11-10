@@ -4,7 +4,6 @@ from dataclasses import dataclass, field
 
 import cv2
 import numpy as np
-
 from rotation import RotationMatrix
 
 from ..utils import SphericalCoordinates
@@ -24,6 +23,7 @@ class EquirectangularProcessor:
     params: EquirectangularProcessorParameters
         Parameters controlling projection and output geometry.
     """
+
     image: np.ndarray
     params: EquirectangularProcessorParameters = field(
         default_factory=EquirectangularProcessorParameters
@@ -35,7 +35,7 @@ class EquirectangularProcessor:
     ) -> tuple[np.ndarray, np.ndarray]:
         """
         Return normalized source image coordinates (u, v) for remap.
-        
+
         Parameters
         ----------
         rotation_matrix: RotationMatrix
@@ -69,8 +69,12 @@ class EquirectangularProcessor:
         v_coordinates = spherical_coordinates.v_coordinates
 
         return (
-            u_coordinates.reshape(self.params.output_image_h, self.params.output_image_w),
-            v_coordinates.reshape(self.params.output_image_h, self.params.output_image_w),
+            u_coordinates.reshape(
+                self.params.output_image_h, self.params.output_image_w
+            ),
+            v_coordinates.reshape(
+                self.params.output_image_h, self.params.output_image_w
+            ),
         )
 
     def run_pipeline(self, rotation_matrix: RotationMatrix) -> np.ndarray:
@@ -150,8 +154,12 @@ class EquirectangularProcessor:
         np.ndarray
             The remapped image.
         """
-        x_pixel_coordinate = (u_coordinates * (self.image.shape[1] - 1)).astype(np.float32)
-        y_pixel_coordinate = (v_coordinates * (self.image.shape[0] - 1)).astype(np.float32)
+        x_pixel_coordinate = (u_coordinates * (self.image.shape[1] - 1)).astype(
+            np.float32
+        )
+        y_pixel_coordinate = (v_coordinates * (self.image.shape[0] - 1)).astype(
+            np.float32
+        )
         return cv2.remap(
             self.image,
             x_pixel_coordinate,

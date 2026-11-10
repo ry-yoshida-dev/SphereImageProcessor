@@ -2,19 +2,18 @@ from dataclasses import dataclass, field
 
 import cv2
 import numpy as np
-
-from .parameter import FisheyeProcessorParameters
-
-from rotation import RotationMatrix
 from geometry.planar import PolarCoordinate
 from geometry.spatial import Vectors3D
+from rotation import RotationMatrix
+
+from .parameter import FisheyeProcessorParameters
 
 
 @dataclass
 class FisheyeProcessor:
     """
     Fisheye processor.
-    
+
     Attributes
     ----------
     image: np.ndarray
@@ -22,6 +21,7 @@ class FisheyeProcessor:
     params: FisheyeProcessorParameters
         The parameters for the fisheye processor.
     """
+
     image: np.ndarray
     params: FisheyeProcessorParameters = field(
         default_factory=FisheyeProcessorParameters
@@ -55,7 +55,7 @@ class FisheyeProcessor:
     ) -> tuple[np.ndarray, np.ndarray]:
         """
         Return normalized image-plane (u, v) in [0, 1] for remap.
-        
+
         Parameters
         ----------
         rotation_matrix: RotationMatrix
@@ -69,26 +69,24 @@ class FisheyeProcessor:
         direction_vectors: Vectors3D = self._create_direction_vector_grid()
         rotated_direction_vectors: Vectors3D = Vectors3D(
             value=direction_vectors.value @ rotation_matrix.T
-            )
-        azimuthal_angles = rotated_direction_vectors.to_azimuthal_angles(
-            up_index=2
-            )
+        )
+        azimuthal_angles = rotated_direction_vectors.to_azimuthal_angles(up_index=2)
         polar_angles = rotated_direction_vectors.to_polar_angles(
             forward_index=0,
             right_index=1,
-            )
+        )
         max_incident_angle = float(self.params.camera_fov.radian[0] / 2)
         radius = self.params.method.calculate_radius(
             f=max_incident_angle,
             angle=azimuthal_angles,
-            )
+        )
         polar_coordinate = PolarCoordinate(
             radius=radius,
             angle=polar_angles,
-            )
+        )
         return self._PolarCoordinate2NormalizedCartesianCoordinate(
             polar_coordinate=polar_coordinate
-            )
+        )
 
     def _create_direction_vector_grid(self) -> Vectors3D:
         """
@@ -110,25 +108,25 @@ class FisheyeProcessor:
             -np.tan(self.params.output_hfov.radian / 2),
             np.tan(self.params.output_hfov.radian / 2),
             self.params.output_image_w,
-            )
+        )
 
         vertical_coordinates = np.linspace(
             -np.tan(self.params.output_vfov.radian / 2),
             np.tan(self.params.output_vfov.radian / 2),
             self.params.output_image_h,
-            )
+        )
 
         if self.params.is_camera_pointing_up:
             vertical_coordinates *= -1
 
         horizontal_grid, vertical_grid = np.meshgrid(
             horizontal_coordinates, vertical_coordinates
-            )
+        )
         depth_grid = np.ones_like(horizontal_grid)
 
         direction_vectors = np.stack(
             [depth_grid, horizontal_grid, vertical_grid], axis=-1
-            )
+        )
         direction_vectors /= np.linalg.norm(direction_vectors, axis=-1, keepdims=True)
         return Vectors3D(value=direction_vectors.reshape(-1, 3))
 
@@ -183,8 +181,12 @@ class FisheyeProcessor:
         np.ndarray
             The remapped image.
         """
-        x_pixel_coordinate = (u_coordinates * (self.image.shape[1] - 1)).astype(np.float32)
-        y_pixel_coordinate = (v_coordinates * (self.image.shape[0] - 1)).astype(np.float32)
+        x_pixel_coordinate = (u_coordinates * (self.image.shape[1] - 1)).astype(
+            np.float32
+        )
+        y_pixel_coordinate = (v_coordinates * (self.image.shape[0] - 1)).astype(
+            np.float32
+        )
 
         remapped_image = cv2.remap(
             self.image,

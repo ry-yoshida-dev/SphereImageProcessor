@@ -4,12 +4,11 @@ import argparse
 
 import cv2
 import numpy as np
-
 from handedness_rotation import (
-    EulerAngles, 
-    IntrinsicRotationOrder, 
-    RotationMatrix, 
-    CoordinateHandedness
+    CoordinateHandedness,
+    EulerAngles,
+    IntrinsicRotationOrder,
+    RotationMatrix,
 )
 from units import AngleUnit
 

@@ -15,7 +15,9 @@ from .image_kind import ImageKind
 
 _FRONTEND_DIRECTORY = Path(__file__).parent / "frontend"
 
-_component_func = components.declare_component("panorama_viewer", path=str(_FRONTEND_DIRECTORY))
+_component_func = components.declare_component(
+    "panorama_viewer", path=str(_FRONTEND_DIRECTORY)
+)
 
 
 class PanoramaViewer:

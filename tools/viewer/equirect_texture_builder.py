@@ -66,8 +66,12 @@ class FisheyeEquirectTextureBuilder:
 
         incident_angle_grid = np.pi / 2 - latitude_grid
         half_camera_fov_radian = np.deg2rad(self.camera_fov_degree) / 2.0
-        incident_angle = Angle(value=incident_angle_grid.reshape(-1), unit=AngleUnit.RADIAN)
-        radius = self.method.calculate_radius(f=half_camera_fov_radian, angle=incident_angle)
+        incident_angle = Angle(
+            value=incident_angle_grid.reshape(-1), unit=AngleUnit.RADIAN
+        )
+        radius = self.method.calculate_radius(
+            f=half_camera_fov_radian, angle=incident_angle
+        )
         radius = radius.reshape(incident_angle_grid.shape)
 
         u_coordinate = radius * np.cos(longitude_grid)

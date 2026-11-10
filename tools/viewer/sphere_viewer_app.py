@@ -69,7 +69,9 @@ class SphereViewerApp:
                 "Viewer width (px)", min_value=320, max_value=1600, value=1600, step=20
             )
             flat_view_export_fields = self._render_flat_view_export_controls()
-            st.caption("Drag to look around, scroll to zoom — fully interactive, no reload.")
+            st.caption(
+                "Drag to look around, scroll to zoom — fully interactive, no reload."
+            )
 
         if loaded_image is None:
             st.info("Select or upload an image to begin.")
@@ -163,7 +165,9 @@ class SphereViewerApp:
         )
         match image_source_kind:
             case ImageSourceKind.UPLOADED_FILE:
-                uploaded_file = st.file_uploader("Upload image", type=["png", "jpg", "jpeg"])
+                uploaded_file = st.file_uploader(
+                    "Upload image", type=["png", "jpg", "jpeg"]
+                )
                 if uploaded_file is None:
                     return None
                 uploaded_image: LoadedImage = self._load_uploaded_image(
@@ -178,7 +182,9 @@ class SphereViewerApp:
                     )
                     return None
                 selected_path = st.selectbox(
-                    "Sample image", options=sample_paths, format_func=lambda path: path.name
+                    "Sample image",
+                    options=sample_paths,
+                    format_func=lambda path: path.name,
                 )
                 sample_image: LoadedImage = self._load_sample_image(selected_path)
                 return sample_image
@@ -261,7 +267,9 @@ class SphereViewerApp:
             returned unused when `image_kind` is not `FISHEYE`.
         """
         if image_kind is not ImageKind.FISHEYE:
-            st.caption("Equirectangular sources are used as-is; no conversion is needed.")
+            st.caption(
+                "Equirectangular sources are used as-is; no conversion is needed."
+            )
             return FisheyeProjectionMethod.EQUIDISTANT, 185.0, True
 
         fisheye_methods = list(FisheyeProjectionMethod)
@@ -334,8 +342,12 @@ class SphereViewerApp:
         camera_name = st.text_input("Camera name", value="camera1")
         view_name = st.text_input("View name", value="camera1_view")
         roll_deg = st.number_input("Roll (deg)", value=0.0, step=1.0)
-        output_width = st.number_input("Output width (px)", min_value=1, value=1280, step=1)
-        output_height = st.number_input("Output height (px)", min_value=1, value=720, step=1)
+        output_width = st.number_input(
+            "Output width (px)", min_value=1, value=1280, step=1
+        )
+        output_height = st.number_input(
+            "Output height (px)", min_value=1, value=720, step=1
+        )
         output_basis_options = list(OutputFovBasis)
         output_basis = st.selectbox(
             "Output FoV basis",

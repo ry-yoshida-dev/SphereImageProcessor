@@ -69,7 +69,8 @@ class SphericalCoordinates:
             shape (n,) or (h, w)
             Euclidean norm sqrt(x^2 + y^2) for each element.
         """
-        return np.sqrt(x_coordinates**2 + y_coordinates**2)
+        norm: np.ndarray = np.sqrt(x_coordinates**2 + y_coordinates**2)
+        return norm
 
     @classmethod
     def from_cartesian(

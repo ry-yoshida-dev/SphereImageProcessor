@@ -36,29 +36,43 @@ class TestFisheyeProcessorParameters:
 
     def test_rejects_camera_fov_with_multiple_elements(self) -> None:
         """camera_fov with more than one element must raise ValueError."""
-        with pytest.raises(ValueError, match="camera_fov must contain exactly one element"):
+        with pytest.raises(
+            ValueError, match="camera_fov must contain exactly one element"
+        ):
             FisheyeProcessorParameters(
                 camera_fov=Angle(value=np.array([100.0, 200.0]), unit=AngleUnit.DEGREE),
             )
 
     @pytest.mark.parametrize("camera_fov_degree", [0.0, 360.0, 400.0])
-    def test_rejects_camera_fov_outside_valid_range(self, camera_fov_degree: float) -> None:
+    def test_rejects_camera_fov_outside_valid_range(
+        self, camera_fov_degree: float
+    ) -> None:
         """camera_fov outside (0, 360) degrees must raise ValueError."""
         with pytest.raises(ValueError, match="camera_fov must satisfy"):
             FisheyeProcessorParameters(
-                camera_fov=Angle(value=np.array([camera_fov_degree]), unit=AngleUnit.DEGREE),
+                camera_fov=Angle(
+                    value=np.array([camera_fov_degree]), unit=AngleUnit.DEGREE
+                ),
             )
 
     @pytest.mark.parametrize("output_fov_degree", [0.0, 180.0, 270.0])
-    def test_rejects_output_fov_outside_valid_range(self, output_fov_degree: float) -> None:
+    def test_rejects_output_fov_outside_valid_range(
+        self, output_fov_degree: float
+    ) -> None:
         """output_fov outside (0, 180) degrees must raise ValueError."""
         with pytest.raises(ValueError, match="output_fov must satisfy"):
             FisheyeProcessorParameters(
-                output_fov=Angle(value=np.array([output_fov_degree]), unit=AngleUnit.DEGREE),
+                output_fov=Angle(
+                    value=np.array([output_fov_degree]), unit=AngleUnit.DEGREE
+                ),
             )
 
-    @pytest.mark.parametrize(("output_image_w", "output_image_h"), [(0, 960), (960, 0), (-1, 960)])
-    def test_rejects_non_positive_output_image_size(self, output_image_w: int, output_image_h: int) -> None:
+    @pytest.mark.parametrize(
+        ("output_image_w", "output_image_h"), [(0, 960), (960, 0), (-1, 960)]
+    )
+    def test_rejects_non_positive_output_image_size(
+        self, output_image_w: int, output_image_h: int
+    ) -> None:
         """Non-positive output_image_w or output_image_h must raise ValueError."""
         with pytest.raises(ValueError, match="must be greater than zero"):
             FisheyeProcessorParameters(

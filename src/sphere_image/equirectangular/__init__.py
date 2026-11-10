@@ -1,11 +1,11 @@
-from .processor import EquirectangularProcessor
 from ..utils import OutputFovBasis as EquirectangularBasis
 from .method import EquirectangularProjectionMethod
 from .parameter import EquirectangularProcessorParameters
+from .processor import EquirectangularProcessor
 
 __all__ = [
-    "EquirectangularProcessor",
     "EquirectangularBasis",
-    "EquirectangularProjectionMethod",
+    "EquirectangularProcessor",
     "EquirectangularProcessorParameters",
+    "EquirectangularProjectionMethod",
 ]

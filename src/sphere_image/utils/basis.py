@@ -3,7 +3,6 @@ from __future__ import annotations
 from enum import Enum
 
 import numpy as np
-
 from units import Angle, AngleUnit
 
 

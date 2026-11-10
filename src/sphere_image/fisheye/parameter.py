@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import numpy as np
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
+
+import numpy as np
 
 from ..utils import OutputFovBasis
 from .method import FisheyeProjectionMethod
@@ -11,11 +12,12 @@ if TYPE_CHECKING:
     from .processor import FisheyeProcessor
 from units import Angle, AngleUnit
 
+
 @dataclass
 class FisheyeProcessorParameters:
     """
     Parameters for fisheye processor(class for transforming fisheye image to equidistant image).
-    
+
     Attributes
     ----------
     method: FisheyeProjectionMethod
@@ -38,15 +40,24 @@ class FisheyeProcessorParameters:
         The height of the output image.
 
     """
-    method: FisheyeProjectionMethod = field(default_factory=lambda: FisheyeProjectionMethod.EQUIDISTANT)
+
+    method: FisheyeProjectionMethod = field(
+        default_factory=lambda: FisheyeProjectionMethod.EQUIDISTANT
+    )
     is_camera_pointing_up: bool = True
-    camera_fov: Angle = field(default_factory=lambda: Angle(value=np.array([185]), unit=AngleUnit.DEGREE))
+    camera_fov: Angle = field(
+        default_factory=lambda: Angle(value=np.array([185]), unit=AngleUnit.DEGREE)
+    )
 
     output_image_w: int = 960
     output_image_h: int = 960
 
-    output_fov: Angle = field(default_factory=lambda: Angle(value=np.array([90]), unit=AngleUnit.DEGREE))
-    output_basis: OutputFovBasis = field(default_factory=lambda: OutputFovBasis.VERTICAL)
+    output_fov: Angle = field(
+        default_factory=lambda: Angle(value=np.array([90]), unit=AngleUnit.DEGREE)
+    )
+    output_basis: OutputFovBasis = field(
+        default_factory=lambda: OutputFovBasis.VERTICAL
+    )
     output_hfov: Angle = field(init=False)
     output_vfov: Angle = field(init=False)
 
@@ -84,6 +95,7 @@ class FisheyeProcessorParameters:
             Processor instance that applies self.method in radius mapping.
         """
         from .processor import FisheyeProcessor
+
         return FisheyeProcessor(image=image, params=self)
 
     @property
@@ -110,16 +122,18 @@ class FisheyeProcessorParameters:
         focal_x = image_width / (2.0 * np.tan(self.output_hfov.radian[0] / 2.0))
         focal_y = image_height / (2.0 * np.tan(self.output_vfov.radian[0] / 2.0))
 
-        return np.array([
-            [focal_x, 0.0, principal_x],
-            [0.0, focal_y, principal_y],
-            [0, 0, 1],
-        ])
+        return np.array(
+            [
+                [focal_x, 0.0, principal_x],
+                [0.0, focal_y, principal_y],
+                [0, 0, 1],
+            ]
+        )
 
     def _validate_params(self) -> None:
         """
         Validate basic shape/value constraints for constructor inputs.
-        
+
         Raises
         ------
         ValueError
@@ -131,19 +145,26 @@ class FisheyeProcessorParameters:
             - output_image_w and output_image_h must be greater than zero.
         """
         # Current implementation expects scalar angles encoded as length-1 arrays.
-        for field_name, angle in (("camera_fov", self.camera_fov), ("output_fov", self.output_fov)):
+        for field_name, angle in (
+            ("camera_fov", self.camera_fov),
+            ("output_fov", self.output_fov),
+        ):
             value = np.asarray(angle.value)
             if value.size != 1:
                 raise ValueError(
                     f"{field_name} must contain exactly one element, got {value.size}."
                 )
-        camera_fov_radian = float(np.asarray(self.camera_fov.radian, dtype=np.float64).reshape(-1)[0])
+        camera_fov_radian = float(
+            np.asarray(self.camera_fov.radian, dtype=np.float64).reshape(-1)[0]
+        )
         if not (0.0 < camera_fov_radian < 2.0 * np.pi):
             raise ValueError(
                 f"camera_fov must satisfy 0 < fov < 360 degrees, got {np.rad2deg(camera_fov_radian):.3f} degrees."
             )
 
-        output_fov_radian = float(np.asarray(self.output_fov.radian, dtype=np.float64).reshape(-1)[0])
+        output_fov_radian = float(
+            np.asarray(self.output_fov.radian, dtype=np.float64).reshape(-1)[0]
+        )
         if not (0.0 < output_fov_radian < np.pi):
             raise ValueError(
                 f"output_fov must satisfy 0 < fov < 180 degrees, got {np.rad2deg(output_fov_radian):.3f} degrees."

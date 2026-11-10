@@ -27,7 +27,9 @@ class TestFisheyeProcessorDirectionVectorGrid:
 class TestFisheyeProcessorPolarCoordinateConversion:
     """Tests for FisheyeProcessor._PolarCoordinate2NormalizedCartesianCoordinate."""
 
-    def test_zero_radius_maps_to_image_center(self, sample_fisheye_image: np.ndarray) -> None:
+    def test_zero_radius_maps_to_image_center(
+        self, sample_fisheye_image: np.ndarray
+    ) -> None:
         """A zero-radius polar coordinate must map to the normalized center (0.5, 0.5)."""
         params = FisheyeProcessorParameters(output_image_w=1, output_image_h=1)
         processor = FisheyeProcessor(image=sample_fisheye_image, params=params)
@@ -35,8 +37,10 @@ class TestFisheyeProcessorPolarCoordinateConversion:
             radius=np.array([0.0]),
             angle=Angle(value=np.array([0.0]), unit=AngleUnit.RADIAN),
         )
-        u_coordinates, v_coordinates = processor._PolarCoordinate2NormalizedCartesianCoordinate(
-            polar_coordinate=polar_coordinate
+        u_coordinates, v_coordinates = (
+            processor._PolarCoordinate2NormalizedCartesianCoordinate(
+                polar_coordinate=polar_coordinate
+            )
         )
         assert u_coordinates[0, 0] == pytest.approx(0.5)
         assert v_coordinates[0, 0] == pytest.approx(0.5)
@@ -64,8 +68,10 @@ class TestFisheyeProcessorPolarCoordinateConversion:
             radius=np.array([1.0]),
             angle=Angle(value=np.array([angle_radian]), unit=AngleUnit.RADIAN),
         )
-        u_coordinates, v_coordinates = processor._PolarCoordinate2NormalizedCartesianCoordinate(
-            polar_coordinate=polar_coordinate
+        u_coordinates, v_coordinates = (
+            processor._PolarCoordinate2NormalizedCartesianCoordinate(
+                polar_coordinate=polar_coordinate
+            )
         )
         assert u_coordinates[0, 0] == pytest.approx(expected_u, abs=1e-9)
         assert v_coordinates[0, 0] == pytest.approx(expected_v, abs=1e-9)
@@ -74,14 +80,18 @@ class TestFisheyeProcessorPolarCoordinateConversion:
 class TestFisheyeProcessorRemap:
     """Tests for FisheyeProcessor.remap."""
 
-    def test_returns_image_shaped_like_uv_grid(self, sample_fisheye_image: np.ndarray) -> None:
+    def test_returns_image_shaped_like_uv_grid(
+        self, sample_fisheye_image: np.ndarray
+    ) -> None:
         """The remapped output must match the (h, w) shape of the uv grid."""
         params = FisheyeProcessorParameters(output_image_w=6, output_image_h=4)
         processor = FisheyeProcessor(image=sample_fisheye_image, params=params)
         u_coordinates, v_coordinates = np.meshgrid(
             np.linspace(0.0, 1.0, 6), np.linspace(0.0, 1.0, 4)
         )
-        remapped_image = processor.remap(u_coordinates=u_coordinates, v_coordinates=v_coordinates)
+        remapped_image = processor.remap(
+            u_coordinates=u_coordinates, v_coordinates=v_coordinates
+        )
         assert remapped_image.shape == (4, 6, 3)
         assert remapped_image.dtype == sample_fisheye_image.dtype
 

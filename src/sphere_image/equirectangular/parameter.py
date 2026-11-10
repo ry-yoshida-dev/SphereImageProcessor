@@ -4,7 +4,6 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 import numpy as np
-
 from units import Angle, AngleUnit
 
 from ..utils import OutputFovBasis as EquirectangularBasis
@@ -107,7 +106,9 @@ class EquirectangularProcessorParameters:
             raise ValueError(
                 f"output_fov must contain exactly one element, got {value.size}."
             )
-        output_fov_radian = float(np.asarray(self.output_fov.radian, dtype=np.float64).reshape(-1)[0])
+        output_fov_radian = float(
+            np.asarray(self.output_fov.radian, dtype=np.float64).reshape(-1)[0]
+        )
         if not (0.0 < output_fov_radian < np.pi):
             raise ValueError(
                 f"output_fov must satisfy 0 < fov < 180 degrees, got {np.rad2deg(output_fov_radian):.3f} degrees."

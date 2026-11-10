@@ -1,9 +1,9 @@
-from .processor import FisheyeProcessor
 from .method import FisheyeProjectionMethod
 from .parameter import FisheyeProcessorParameters
+from .processor import FisheyeProcessor
 
 __all__ = [
     "FisheyeProcessor",
-    "FisheyeProjectionMethod",
     "FisheyeProcessorParameters",
+    "FisheyeProjectionMethod",
 ]

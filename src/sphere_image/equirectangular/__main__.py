@@ -4,8 +4,12 @@ import argparse
 
 import cv2
 import numpy as np
-
-from handedness_rotation import EulerAngles, IntrinsicRotationOrder, RotationMatrix, CoordinateHandedness
+from handedness_rotation import (
+    CoordinateHandedness,
+    EulerAngles,
+    IntrinsicRotationOrder,
+    RotationMatrix,
+)
 from units import AngleUnit
 
 from .method import EquirectangularProjectionMethod
@@ -54,7 +58,9 @@ def build_cli_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--method",
-        choices=tuple(method.name.lower() for method in EquirectangularProjectionMethod),
+        choices=tuple(
+            method.name.lower() for method in EquirectangularProjectionMethod
+        ),
         default=EquirectangularProjectionMethod.PERSPECTIVE.name.lower(),
         help="Projection method to run.",
     )

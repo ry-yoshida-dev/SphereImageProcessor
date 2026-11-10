@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 from enum import Enum
+
 import numpy as np
 from units import Angle
+
 
 class FisheyeProjectionMethod(Enum):
     """
     Method of fisheye projection.
-    
+
     Attributes
     ----------
     ORTHOGRAPHIC: FisheyeProjectionMethod
@@ -19,14 +21,15 @@ class FisheyeProjectionMethod(Enum):
     EQUISOLID: FisheyeProjectionMethod
         Equisolid projection method.
     """
+
     ORTHOGRAPHIC = "Orthographic"
     EQUIDISTANT = "Equidistant"
     STEREOGRAPHIC = "Stereographic"
     EQUISOLID = "Equisolid"
 
     def calculate_radius(
-        self, 
-        f: float, 
+        self,
+        f: float,
         angle: Angle,
     ) -> np.ndarray:
         """
@@ -52,8 +55,11 @@ class FisheyeProjectionMethod(Enum):
             case FisheyeProjectionMethod.EQUIDISTANT:
                 return theta / f
             case FisheyeProjectionMethod.ORTHOGRAPHIC:
-                return np.sin(theta) / np.sin(f)
+                radius: np.ndarray = np.sin(theta) / np.sin(f)
+                return radius
             case FisheyeProjectionMethod.STEREOGRAPHIC:
-                return np.tan(theta / 2) / np.tan(f / 2)
+                radius = np.tan(theta / 2) / np.tan(f / 2)
+                return radius
             case FisheyeProjectionMethod.EQUISOLID:
-                return np.sin(theta / 2) / np.sin(f / 2)
+                radius = np.sin(theta / 2) / np.sin(f / 2)
+                return radius

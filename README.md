@@ -78,3 +78,14 @@ Tests live under [tests/](tests/) and mirror the `src/sphere_image` layout. Inst
 uv sync
 uv run pytest
 ```
+
+## Continuous integration
+
+[.github/workflows/ci.yaml](.github/workflows/ci.yaml) runs the same checks on pull requests and pushes to `main`:
+
+```bash
+uv run ruff check .
+uv run ruff format --check .
+uv run mypy
+uv run pytest
+```

@@ -19,7 +19,9 @@ class TestFisheyeProjectionMethodCalculateRadius:
             FisheyeProjectionMethod.EQUISOLID,
         ],
     )
-    def test_radius_is_zero_at_optical_axis(self, method: FisheyeProjectionMethod) -> None:
+    def test_radius_is_zero_at_optical_axis(
+        self, method: FisheyeProjectionMethod
+    ) -> None:
         """Every projection law must map theta=0 to radius=0."""
         half_fov_radian = np.pi / 2
         angle = Angle(value=np.array([0.0]), unit=AngleUnit.RADIAN)
